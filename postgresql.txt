@@ -1,0 +1,7 @@
+docker run -p 5432:5432 --name ParkOnLive-Postgres -e POSTGRES_PASSWORD=P4rk0nl1v3 -d postgres
+
+name: ParkOnLive-Postgres
+host: host.docker.internal
+database: postgres
+user: postgres
+password: P4rk0nl1v3

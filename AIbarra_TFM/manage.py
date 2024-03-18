@@ -6,7 +6,7 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "ParkOnLive.settings")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "AIbarra_TFM.settings")
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

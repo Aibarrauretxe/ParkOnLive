@@ -1,5 +1,5 @@
 """
-URL configuration for ParkOnLive project.
+URL configuration for AIbarra_TFM project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.0/topics/http/urls/
@@ -17,6 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from ParkOnLive.views import home, user_register, user_list
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("", home, name="home"),
+    path("users/register", user_register, name="user_register"),
+    path("users/list", user_list, name="user_list"),
 ]
