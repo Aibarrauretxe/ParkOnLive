@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <!-- Este div contiene el formulario de registro -->
+    <div id="signup-form" class="container">
+        <!-- Título principal de la página -->
+        <h1>Registrarse</h1>
+
+        <!-- Separador -->
+        <div class="dropdown-divider custom-divider"></div>
+
+        <br>
+
+        <!-- Descripción de los pasos a seguir después de registrarse -->
+        <p>Por favor, sigue estos pasos después de registrarte:</p>
+        <!-- Lista numerada de pasos -->
+        <ol>
+            <!-- Paso 1: Completar el proceso de registro -->
+            <li>Complete el proceso de registro proporcionando su nombre de usuario, dirección de correo electrónico y contraseña.</li>
+        
+            <!-- Paso 2: Acceder a la plataforma -->
+            <li>Acceda a la plataforma mediante el proceso de inicio de sesión correspondiente.</li>
+        
+            <!-- Paso 3: Ir al perfil personal -->
+            <li>Diríjase a su perfil personal utilizando la opción disponible en el menú desplegable ubicado en la esquina superior derecha de la barra de navegación.</li>
+        
+            <!-- Paso 4: Cambiar a proveedor -->
+            <li>Haga clic en el botón designado como "Cambiar a proveedor" y siga las instrucciones proporcionadas en la página subsiguiente.</li>
+        </ol>
+
+        <!-- Separador -->
+        <div class="dropdown-divider custom-divider"></div>
+
+        <!-- Sección de manejo de errores en el formulario -->
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                <strong>Error:</strong> Por favor, corrija el(los) siguientes error(es):
+                <ul>
+                    <!-- Muestra cada error en una lista -->
+                    {% for error in errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <!-- Formulario de registro -->
+        <form method="post" class="px-4 py-3">
+            {% csrf_token %}
+            <div class="form-group">
+                <div class="row">
+                    <div class="col">
+                        <label for="id_username">Nombre de usuario:</label>
+                        <input type="text" id="id_username" name="username" class="form-control" required>
+                    </div>
+                    <div class="col">
+                        <label for="id_email">Correo electrónico:</label>
+                        <input type="email" id="id_email" name="email" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col">
+                        <label for="id_password_new">Contraseña:</label>
+                        <div class="input-group">
+                            <input type="password" id="id_password_new" name="password" class="form-control" required>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" id="show_password">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <label for="id_password_confirm">Confirmar contraseña:</label>
+                        <div class="input-group">
+                            <input type="password" id="id_password_confirm" name="password_confirm" class="form-control" required>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" id="show_password_confirm">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Botón para enviar el formulario -->
+            <button type="submit" class="btn btn-primary" id="register-submit-btn">Registrarse</button>
+        </form>
+
+        <!-- Separador -->
+        <div class="dropdown-divider custom-divider"></div>
+
+        <!-- Enlace para ir a la página de inicio de sesión -->
+        <a href="{% url 'home_view' %}?registered=true" class="btn btn-link">¿Ya tienes una cuenta? Inicia sesión</a>
+
+    </div>
+
+    <script>
+        // Función para cambiar el tipo de entrada del campo de contraseña
+        function togglePassword(inputId) {
+            var input = document.getElementById(inputId);
+            // Verifica si el campo tiene la clase 'is-password'
+            if (input.type === "password") {
+                input.type = "text";
+                input.classList.add("is-password");
+            } else {
+                input.type = "password";
+                input.classList.remove("is-password");
+            }
+        }
+    
+        // Función para validar que el campo de contraseña esté en formato de contraseña
+        function validatePasswordFormat() {
+            var passwordField = document.getElementById("id_password_new");
+            var confirmPasswordField = document.getElementById("id_password_confirm");
+            // Verifica si los campos tienen la clase 'is-password'
+            if (!passwordField.classList.contains("is-password") || !confirmPasswordField.classList.contains("is-password")) {
+                alert("Por favor, asegúrese de que los campos de contraseña estén en formato de contraseña.");
+                return false; // Detiene el envío del formulario
+            }
+            return true; // Permite el envío del formulario
+        }
+    
+        // Agrega un evento de clic al botón de visualización de contraseña
+        document.getElementById("show_password").addEventListener("click", function() {
+            togglePassword("id_password_new");
+        });
+
+        // Agrega un evento de clic al botón de visualización de confirmación de contraseña
+        document.getElementById("show_password_confirm").addEventListener("click", function() {
+            togglePassword("id_password_confirm");
+        });
+
+        // Agrega un evento de envío al formulario
+        document.querySelector("form").addEventListener("submit", function(event) {
+            // Ejecuta la función de validación de formato de contraseña antes de enviar el formulario
+            if (!validatePasswordFormat()) {
+                event.preventDefault(); // Detiene el envío del formulario si la validación falla
+            }
+        });
+    </script>    
+    
+    
+{% endblock %}
+

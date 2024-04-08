@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <div id="show-parking-form" class="container">
+        <h1>Parkings del Proveedor</h1>
+
+        <!-- Separador -->
+        <div class="dropdown-divider custom-divider"></div>
+
+        <!-- Verificar si hay parkings para mostrar -->
+        {% if parkings %}
+            <div class="row">
+                <!-- Iterar sobre cada parking y mostrar su información -->
+                {% for parking in parkings %}
+                    <div class="col-md-4">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ parking.name }}</h5>
+                                <hr>
+                                <p class="card-text"><b>Descripción:</b> {{ parking.description }}</p>
+                                <p class="card-text"><b>Dirección:</b> {{ parking.address }}, {{ parking.city }}, {{ parking.postal_cod }}</p>
+                                <p class="card-text"><b>Estado:</b> {{ parking.status }}</p>
+                                
+                                <!-- Botones de editar y borrar -->
+                                <a href="{% url 'edit_parking' parking.pk %}" class="btn btn-primary">Editar</a>
+                                <!-- Formulario para confirmar la eliminación del parking -->
+                                <form action="{% url 'delete_parking' parking.pk %}" method="post" style="display: inline;">
+                                    {% csrf_token %}
+                                    <button type="button" class="btn btn-danger" onclick="confirmarBorrado('{{ parking.name }}')">Borrar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No hay parkings disponibles para este proveedor.</p>
+        {% endif %}
+
+        <!-- Botón para crear un nuevo parking -->
+        <a href="{% url 'parking_create_view' %}" class="btn btn-success" id="create-parking-btn">Crear Nuevo Parking</a>
+    </div>
+
+    <script>
+        function confirmarBorrado(nombreParking) {
+            if (confirm("¿Estás seguro de que deseas eliminar el parking '" + nombreParking + "'?")) {
+                // Si el usuario confirma, enviar el formulario para borrar el parking
+                event.target.parentNode.submit();
+            }
+        }
+    </script>
+{% endblock %}

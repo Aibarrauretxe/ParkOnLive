@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <!-- Este div contiene el formulario de registro -->
+    <div id="signup-form" class="container">
+        <!-- Título principal de la página -->
+        <h1>Registrarse como Proveedor</h1>
+
+        <!-- Separador -->
+        <div class="dropdown-divider custom-divider"></div>
+
+        <br>
+
+        <!-- Descripción de los pasos a seguir después de registrarse -->
+        <p>Por favor, sigue estos pasos después de registrarte:</p>
+        <!-- Lista numerada de pasos -->
+        <ol>
+            <!-- Paso 1: Completar el proceso de registro -->
+            <li>Para registrarse como proveedor deberá registrarse como usuario previamente.</li>
+        
+            <!-- Paso 2: Acceder a la plataforma -->
+            <li>Una vez registrado como usuario, acuda al registro de proveedor e introduzca su nombre de usuario.</li>
+        
+            <!-- Paso 3: Ir al perfil personal -->
+            <li>Complete el resto de los requisitos y será registrado como proveedor.</li>
+        </ol>
+
+        <!-- Separador -->
+        <div class="dropdown-divider custom-divider"></div>
+
+        <!-- Sección de manejo de errores en el formulario -->
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                <strong>Error:</strong> Por favor, corrija el(los) siguientes error(es):
+                <ul>
+                    <!-- Muestra cada error en una lista -->
+                    {% for error in form.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <!-- Formulario de registro -->
+        <form method="post" class="px-4 py-3">
+            {% csrf_token %}
+            <div class="form-group row">
+                <div class="col">
+                    <label for="id_username">Nombre de usuario:</label>
+                    <input type="text" id="id_username" name="username" value="{{ request.user.username }}" class="form-control" required readonly>
+                </div>
+                <div class="col">
+                    <label for="id_nif">NIF:</label>
+                    <input type="text" id="id_nif" name="nif" class="form-control" required>
+                </div>
+                <div class="col">
+                    <label for="id_name">Nombre:</label>
+                    <input type="text" id="id_name" name="name" class="form-control" required>
+                </div>
+            </div>
+            <!-- Botón para enviar el formulario -->
+            <button type="submit" class="btn btn-primary" id="register-submit-btn">Registrarse</button>
+        </form>
+
+        <!-- Separador -->
+        <div class="dropdown-divider custom-divider"></div>
+
+        <!-- Enlace para ir a la página de inicio de sesión -->
+        <a href="{% url 'home_view' %}?registered=true" class="btn btn-link">¿Ya tienes una cuenta? Inicia sesión</a>
+
+    </div>
+{% endblock %}

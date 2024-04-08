@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <div id="edit-parking-form" class="container">
+        <h1>Editar Parking</h1>
+
+        <!-- Separador -->
+        <div class="dropdown-divider custom-divider"></div>
+
+        <!-- Sección de manejo de errores en el formulario -->
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                <strong>Error:</strong> Por favor, corrija el(los) siguientes error(es):
+                <ul>
+                    <!-- Muestra cada error en una lista -->
+                    {% for error in form.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <!-- Formulario de edición de parking -->
+        <form method="post" id="parking-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <div class="row">
+                    <div class="col">
+                        <label for="id_username">Nombre de usuario:</label>
+                        <input type="text" id="id_username" name="username" value="{{ request.user.username }}" class="form-control" required readonly>
+                    </div>
+                    <!-- Campo para el NIF -->
+                    <div class="col">
+                        <label for="id_nif">NIF:</label>
+                        <input type="text" id="id_nif" name="nif" value="{{ provider.nif }}" class="form-control" required>
+                    </div>
+                    <!-- Campo para el nombre -->
+                    <div class="col">
+                        <label for="id_name">Nombre del parking:</label>
+                        <input type="text" id="id_name" name="name" value="{{ parking.name }}" class="form-control" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- Campo para la latitud -->
+                    <div class="col">
+                        <label for="id_latitud">Latitud:</label>
+                        <input type="number" id="id_latitud" name="latitud" value="{{ parking.latitud }}" class="form-control" step="any" required>
+                    </div>
+                    <!-- Campo para la longitud -->
+                    <div class="col">
+                        <label for="id_longitud">Longitud:</label>
+                        <input type="number" id="id_longitud" name="longitud" value="{{ parking.longitud }}" class="form-control" step="any" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <!-- Campo para la descripción -->
+                        <label for="id_description">Descripción:</label>
+                        <textarea id="id_description" name="description" class="form-control" rows="4" required>{{ parking.description }}</textarea>
+                    </div>
+                </div>
+            
+                <div class="row">
+                    <div class="col">
+                        <!-- Campo para el código postal -->
+                        <label for="id_postal_cod">Código Postal:</label>
+                        <input type="text" id="id_postal_cod" name="postal_cod" value="{{ parking.postal_cod }}" class="form-control" required>
+                    </div>
+                    <div class="col">
+                        <!-- Campo para la ciudad -->
+                        <label for="id_city">Ciudad:</label>
+                        <input type="text" id="id_city" name="city" value="{{ parking.city }}" class="form-control" required>
+                    </div>
+                    <div class="col">
+                        <!-- Campo para el estado -->
+                        <label for="id_status">Estado:</label>
+                        <select id="id_status" name="status" class="form-control" required>
+                            <option value="Activo" {% if parking.status == "Activo" %}selected{% endif %}>Activo</option>
+                            <option value="Inactivo" {% if parking.status == "Inactivo" %}selected{% endif %}>Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <!-- Campo para la dirección -->
+                        <label for="id_address">Dirección:</label>
+                        <input type="text" id="id_address" name="address" value="{{ parking.address }}" class="form-control" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <!-- Campo para el enlace de Google Maps -->
+                        <label for="id_google_maps_url">Enlace de Google Maps:</label>
+                        <input type="url" id="id_google_maps_url" name="google_maps_url" value="{{ parking.google_maps_url }}" class="form-control" required>
+                    </div>
+                    <div class="col">
+                        <!-- Campo para el enlace de Google Maps Iframe -->
+                        <label for="id_google_maps_iframe">Google Maps Iframe:</label>
+                        <input type="text" id="id_google_maps_iframe" name="google_maps_iframe" value="{{ parking.google_maps_iframe }}" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Botón para enviar el formulario -->
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            <a href="{% url 'parkings_provider_view' %}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+{% endblock %}

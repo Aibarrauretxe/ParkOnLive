@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <div id="show-parking-form" class="container">
+        <h1>Parkings</h1>
+
+        <!-- Separador -->
+        <div class="dropdown-divider custom-divider"></div>
+
+        <form method="get" action="{% url 'parkings' %}">
+            <div class="form-group row">
+                <div class="col">
+                    <label for="status_filter">Filtrar por estado:</label>
+                    <select class="form-control" id="status_filter" name="status" value="{{ status }}">
+                        <option value="">Todos</option>
+                        <option value="Abierto">Abierto</option>
+                        <option value="Cerrado">Cerrado</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label for="filter_city">Buscar por ciudad:</label>
+                    <input type="text" class="form-control" id="filter_city" name="city" value="{{ city }}">
+                </div>
+                <div class="col">
+                    <label for="filter_city">Buscar por codigo postal:</label>
+                    <input type="text" class="form-control" id="filter_postal_cod" name="postal_cod" value="{{ postal_cod }}">
+                </div>
+                <div class="col-auto ml-auto">
+                    <div class="form-check">
+                        {% if favourites == 'on' %}
+                            <input type="checkbox" class="form-check-input" id="filter_favourites" name="favourites" checked>
+                        {% else %}
+                            <input type="checkbox" class="form-check-input" id="filter_favourites" name="favourites">
+                        {% endif %}
+
+                        <label class="form-check-label" for="filter_favourites">Favoritos</label>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary" id="filter-btn">Filtrar</button>
+        </form>
+
+        <div class="dropdown-divider custom-divider"></div>
+
+        <!-- Verificar si hay parkings para mostrar -->
+        {% if parkings %}
+            <div class="row">
+                <!-- Iterar sobre cada parking y mostrar su información -->
+                {% for parking in parkings %}
+                    <div class="col-md-4" id="parking-card">
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                {% if parking.occupancy_current and parking.status == 'Abierto' %}
+                                    {% if parking.occupation_percentage < 0.5 %}
+                                        <!-- Box para la ocupación actual y máxima -->
+                                        <div class="card-text-box">
+                                            <p class="card-text occupancy-low"> LIBRE </p>
+                                        </div>
+                                    {% elif 0.75 > parking.occupation_percentage >= 0.5 %}
+                                        <!-- Box para la ocupación actual y máxima -->
+                                        <div class="card-text-box">
+                                            <p class="card-text occupancy-midlow"> {{ parking.occupation_difference }} </p>
+                                        </div>
+                                    {% elif 0.9 > parking.occupation_percentage >= 0.75 %}
+                                        <!-- Box para la ocupación actual y máxima -->
+                                        <div class="card-text-box">
+                                            <p class="card-text occupancy-mid"> {{ parking.occupation_difference }} </p>
+                                        </div>
+                                    {% elif 1 > parking.occupation_percentage >= 0.9 %}
+                                        <!-- Box para la ocupación actual y máxima -->
+                                        <div class="card-text-box">
+                                            <p class="card-text occupancy-midhigh"> {{ parking.occupation_difference }} </p>
+                                        </div>
+                                    {% elif parking.occupation_percentage == 1 %}
+                                        <!-- Box para la ocupación actual y máxima -->
+                                        <div class="card-text-box">
+                                            <p class="card-text occupancy-full"> LLENO </p>
+                                        </div>
+                                    {% endif %}
+                                {% elif parking.status == 'Cerrado' %}
+                                    <div class="card-text-box">
+                                        <p class="card-text closed"> {{ parking.status | upper}} </p>
+                                    </div>
+                                {% else %}
+                                    <!-- Box para la ocupación actual y máxima -->
+                                    <div class="card-text-box">
+                                        <p class="card-text occupancy-missing"> DESCONOCIDO </p>
+                                    </div>
+                                {% endif %}
+
+                                <!-- Añadir la estrella de favorito -->
+                                {% if parking.is_favorite %}
+                                    <i class="bi bi-star-fill" id="fav-icon" onclick="toggleFavorite('{{ parking.serial }}')" style="color: gold;"></i>
+                                {% else %}
+                                    <i class="bi bi-star" id="fav-icon" onclick="toggleFavorite('{{ parking.serial }}')" style="color: gray;"></i>
+                                {% endif %}
+
+                                <h5 class="card-title">{{ parking.name }}</h5>
+                                <hr>
+                                <div class="card-data-container">
+                                    <p class="card-text"><b>Descripción:</b> {{ parking.description }}</p>
+                                    <p class="card-text"><b>Dirección:</b> {{ parking.address }}, {{ parking.city }}, {{ parking.postal_cod }}</p>
+                                </div>
+
+                                <!-- Botones de editar y borrar -->
+                                <a href="{{ parking.google_maps_url }}" class="btn btn-primary" id="google-maps-btn">Google Maps</a>
+                                <hr>
+
+                                <div class="google-maps-iframe-container">
+                                    {{ parking.google_maps_iframe | safe }}
+                                </div>
+                                    
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No hay parkings disponibles para este proveedor.</p>
+        {% endif %}
+
+    </div>
+
+    <script>
+        // Función para alternar el estado de favorito del parking
+        function toggleFavorite(parkingId) {
+            // Construir la URL utilizando el ID del parking
+            var url = `/toggle_favorite/${parkingId}/`;
+    
+            // Realizar una solicitud AJAX para cambiar el estado de favorito en el servidor
+            fetch(url)
+                .then(response => {
+                    if (response.ok) {
+                        // Actualizar la página para reflejar el cambio
+                        location.reload();
+                    } else {
+                        console.error('Error al cambiar el estado de favorito del parking');
+                    }
+                })
+                .catch(error => console.error('Error al realizar la solicitud AJAX:', error));
+        }
+    </script>
+
+{% endblock %}

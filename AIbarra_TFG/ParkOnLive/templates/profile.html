@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+    <div id="profile-card" class="card">
+        <!-- Botón de editar en la esquina superior derecha -->
+        <button type="button" id="edit-btn" class="btn btn-outline-secondary" style="position: absolute; top: 10px; right: 10px;"><i class="bi bi-pencil-fill"></i></button>
+        <!-- Botón de cancelar -->
+        <button type="button" id="cancel-btn" class="btn btn-outline-secondary" style="position: absolute; top: 10px; left: 10px; display: none;"><i class="bi bi-x-circle-fill"></i></button>
+        
+        {% if is_provider %}
+            <h1>Perfil de proveedor</h1>
+        {% else %}
+            <h1>Perfil de usuario</h1>
+        {% endif %}
+        
+
+        <!-- Separador -->
+        <div class="dropdown-divider custom-divider"></div>
+
+        <form method="post" id="user-form" class="px-4 py-3">
+            {% csrf_token %}
+            <div class="form-group">
+                <div class="row">
+                    <div class="col">
+                        <label for="username">Nombre de usuario:</label>
+                        <input type="text" id="username" name="username" value="{{ profile_data.username }}" class="form-control" readonly>
+                    </div>
+                    <div class="col">
+                        <label for="email">Correo electrónico:</label>
+                        <input type="email" id="email" name="email" value="{{ profile_data.email }}" class="form-control" readonly>
+                    </div>
+                </div>
+            </div>
+            {% if is_provider %}
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name">Nombre:</label>
+                    <input type="text" id="name" name="name" value="{{ profile_data.name }}" class="form-control" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="nif">NIF:</label>
+                    <input type="text" id="nif" name="nif" value="{{ profile_data.nif }}" class="form-control" readonly>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Separador -->
+            <div id="profile-bottom-divider" class="dropdown-divider custom-divider"></div>
+
+            <!-- Botón de guardar -->
+            <button type="submit" id="save-btn" class="btn btn-save" style="display: none;"><i class="bi bi-check-circle-fill"></i>   Guardar</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('edit-btn').addEventListener('click', function() {
+            // Quita el atributo de solo lectura de los campos
+            document.getElementById('username').removeAttribute('readonly');
+            document.getElementById('email').removeAttribute('readonly');
+            // Verifica si el usuario es un proveedor antes de acceder a los campos específicos
+            {% if is_provider %}
+                document.getElementById('name').removeAttribute('readonly');
+                document.getElementById('nif').removeAttribute('readonly');
+            {% endif %}
+    
+            // Muestra el botón de guardar y oculta el botón de editar
+            document.getElementById('save-btn').style.display = 'block';
+            document.getElementById('edit-btn').style.display = 'none';
+            // Muestra el botón de cancelar
+            document.getElementById('cancel-btn').style.display = 'block';
+        });
+    
+        document.getElementById('cancel-btn').addEventListener('click', function() {
+            // Restablece los valores de los campos a sus valores originales antes de las ediciones
+            document.getElementById('username').value = "{{ profile_data.username }}";
+            document.getElementById('email').value = "{{ profile_data.email }}";
+            // Verifica si el usuario es un proveedor antes de acceder a los campos específicos
+            {% if is_provider %}
+                document.getElementById('name').value = "{{ profile_data.name }}";
+                document.getElementById('nif').value = "{{ profile_data.nif }}";
+            {% endif %}
+    
+            // Vuelve a poner los campos en modo de solo lectura
+            document.getElementById('username').setAttribute('readonly', 'readonly');
+            document.getElementById('email').setAttribute('readonly', 'readonly');
+            // Verifica si el usuario es un proveedor antes de acceder a los campos específicos
+            {% if is_provider %}
+                document.getElementById('name').setAttribute('readonly', 'readonly');
+                document.getElementById('nif').setAttribute('readonly', 'readonly');
+            {% endif %}
+    
+            // Oculta el botón de guardar y muestra el botón de editar
+            document.getElementById('save-btn').style.display = 'none';
+            document.getElementById('edit-btn').style.display = 'block';
+            // Oculta el botón de cancelar
+            document.getElementById('cancel-btn').style.display = 'none';
+        });
+    
+        document.getElementById('user-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Evita el envío del formulario por defecto
+    
+            // Obtén los valores actualizados del formulario
+            var username = document.getElementById('username').value;
+            var email = document.getElementById('email').value;
+            // Verifica si el usuario es un proveedor antes de acceder a los campos específicos
+            var name = document.getElementById('name') ? document.getElementById('name').value : null;
+            var nif = document.getElementById('nif') ? document.getElementById('nif').value : null;
+    
+            // Realiza una solicitud AJAX POST al servidor
+            var formData = new URLSearchParams();
+            formData.append('username', username);
+            formData.append('email', email);
+            // Agrega los campos específicos del proveedor si el usuario es un proveedor
+            if (name && nif) {
+                formData.append('name', name);
+                formData.append('nif', nif);
+            }
+    
+            fetch("{% url 'profile_view' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: formData
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('¡Cambios guardados exitosamente!');
+                } else {
+                    alert('Hubo un error al guardar los cambios.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Hubo un error al guardar los cambios.');
+            });
+        });
+    </script>
+    
+{% endblock %}

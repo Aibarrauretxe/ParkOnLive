@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+    <section id="hero">
+        <div class="container">
+            <h1>¡Encuentra el parking perfecto para ti!</h1>
+            <p>Descubre parkings cercanos, verifica la disponibilidad de plazas y ahorra tiempo.</p>
+            <a id="search-parking-btn" href="{% url 'parkings' %}" class="btn">Buscar Parkings</a>
+        </div>
+    </section>
+
+    <section id="features">
+        <div class="container">
+            <h2>Características Principales</h2>
+            <p id="desc_text">Desde ParkOnLive ofrecemos nuestros servicios tanto para proveedores de servicios de aparcamiento como para sus clientes.</p>
+            <div class="row">
+                <div class="column">
+                    <div class="card">
+                        <h4>Actualización en Tiempo Real</h4>
+                        <p>Nuestro sistema actualiza al instante la disponibilidad de plazas, brindándote información precisa y confiable.</p>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="card">
+                        <h4>Interfaz Intuitiva</h4>
+                        <p>Explora y reserva plazas con total facilidad. Nuestra interfaz ha sido diseñada pensando en ti, con unos simples clics tendrás tu lugar asegurado.</p>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="card">
+                        <h4>Flexibilidad y Comodidad</h4>
+                        <p>Adapta tu experiencia a tus necesidades. Con nuestras opciones de reserva personalizadas, podrás planificar tu día de la manera que más te convenga.</p>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="card">
+                        <h4>Atención al Cliente</h4>
+                        <p>Nuestro equipo está aquí para ayudarte en cada paso del camino. ¡No dudes en contactarnos si necesitas asistencia o tienes alguna pregunta!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+{% endblock %}

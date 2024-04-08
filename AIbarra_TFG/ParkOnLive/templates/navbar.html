@@ -1,0 +1,108 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <!-- Enlace al inicio con el nombre del sitio -->
+        <a class="navbar-brand" href="{% url 'home_view' %}">ParkOnLive</a>
+        <!-- Botón de colapso para dispositivos móviles -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- Contenido del navbar -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <!-- Enlace a la sección "Acerca de" -->
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'parkings' %}">Parkings</a>
+                </li>
+            </ul>
+        </div>
+        <!-- Botón desplegable para inicio de sesión -->
+        {% if request.user.is_authenticated %}
+            <!-- Si el usuario está autenticado, mostramos el icono de usuario -->
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="bi bi-person"></i> {{ user.username }}                      
+                </button>
+                <!-- Menú desplegable del usuario autenticado -->
+                <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                    <!-- Opciones del menú -->
+                    <li><a class="dropdown-item" href="{% url 'profile_view' %}">Perfil</a></li>
+                    {% if is_provider %}
+                        <li><a class="dropdown-item" href="{% url 'parkings_provider_view' %}">Lista Parkings</a></li>
+                    {% else %}
+                        <li><a class="dropdown-item" href="{% url 'provider_signup_view' %}">Convertir en Proveedor</a></li>
+                    {% endif %}
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'logout_view' %}">Cerrar sesión</a></li>
+                </ul>
+            </div>
+        {% else %}
+            <!-- Botón desplegable para inicio de sesión -->
+            <div id="login-dropdown-menu" class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="bi bi-person-circle"></i> Iniciar sesión
+                </button>
+                <!-- Menú desplegable para iniciar sesión -->
+                <div id="login-menu" class="dropdown-menu dropdown-menu-right {% if login_failed or show_login_menu %}show{% endif %}" aria-labelledby="dropdownMenuButton">
+                    <!-- Formulario de inicio de sesión -->
+                    <form method="post" class="px-4 py-3" action="{% url 'login_view' %}">
+                        {% csrf_token %}
+                        <!-- Manejo de mensajes de error -->
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-danger" role="alert">
+                                    {{ message|safe }}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                        <!-- Campo de nombre de usuario -->
+                        <div class="form-group">
+                            <label for="id_username">Nombre de usuario:</label>
+                            <input type="text" name="username" class="form-control" id="id_username" required value="{{ username }}">
+                        </div>
+                        <!-- Campo de contraseña -->
+                        <div class="form-group">
+                            <label for="id_password">Contraseña:</label>
+                            <input type="password" name="password" class="form-control" id="id_password" required>
+                        </div>
+                        <!-- Checkbox para recordar usuario -->
+                        <div class="form-group form-check" id="remember_me_container">
+                            <input type="checkbox" name="remember_me" class="form-check-input" id="remember_me">
+                            <label class="form-check-label" for="remember_me">Recordarme</label>
+                        </div>
+                        <!-- Botón para enviar el formulario -->
+                        <button id="login-btn" type="submit" class="btn btn-primary">Iniciar sesión</button>
+                    </form>
+                    <!-- Enlaces adicionales -->
+                    <div class="dropdown-divider"></div>
+                    <div class="row">
+                        <a class="btn btn-link" href="{% url 'user_signup_view' %}">¿Nuevo usuario? Regístrate</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Script JavaScript para evitar que el menú desplegable se cierre al hacer clic en "Recordarme" -->
+            <script>
+                document.getElementById("remember_me_container").addEventListener("click", function(event) {
+                    // Detiene la propagación del evento para evitar que el menú desplegable se cierre
+                    event.stopPropagation();
+                });
+            </script>
+            <!-- Script JavaScript para evitar que el menú desplegable se cierre al hacer clic en "Iniciar sesión" -->
+            <script>
+                document.getElementById("login-btn").addEventListener("click", function(event) {
+                    // Detiene la propagación del evento clic para evitar que el menú desplegable se cierre
+                    event.stopPropagation();
+                });
+            </script>
+            <!-- Script JavaScript para mostrar el menú de inicio de sesión si se ha registrado un nuevo usuario -->
+            <script>
+                const urlParams = new URLSearchParams(window.location.search);
+                const registered = urlParams.get('registered');
+                if (registered === 'true') {
+                    document.getElementById("login-menu").classList.add("show");
+                }
+            </script>
+            <!-- Fin del botón desplegable para inicio de sesión -->
+        {% endif %}
+        <!-- Fin del botón desplegable para inicio de sesión -->
+    </div>
+</nav>
